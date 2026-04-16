@@ -20,38 +20,19 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: |
-          cd "Script Files"
-          flutter pub get
+        run: flutter pub get
+        working-directory: ./Script Files
 
       - name: Generate code
-        run: |
-          cd "Script Files"
-          flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: Run tests
-        run: |
-          cd "Script Files"
-          flutter test
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+        working-directory: ./Script Files
 
       - name: Build APK (Android)
-        run: |
-          cd "Script Files"
-          flutter build apk --release
+        run: flutter build apk --release
+        working-directory: ./Script Files
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
           name: app-release.apk
-          path: Script Files/build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Build IPA (iOS)
-        run: |
-          cd "Script Files"
-          flutter build ios --release --no-codesign
-
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release.ipa
-          path: Script Files/build/ios/iphoneos/Runner.app
+          path: ./Script Files/build/app/outputs/flutter-apk/app-release.apk

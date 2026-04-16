@@ -18,37 +18,13 @@ jobs:
           channel: 'stable'
 
       - name: Get dependencies
-        run: |
-          cd "Script Files"
-          flutter pub get
+        run: flutter pub get
+        working-directory: ./Script Files
 
       - name: Generate code
-        run: |
-          cd "Script Files"
-          flutter pub run build_runner build --delete-conflicting-outputs
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+        working-directory: ./Script Files
 
       - name: Build iOS for TestFlight
-        run: |
-          cd "Script Files"
-          flutter build ios --release
-
-      - name: Deploy to TestFlight
-        uses: apple-actions/upload-testflight-build@v1
-        with:
-          app-path: 'Script Files/build/ios/iphoneos/Runner.app'
-          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-
-      - name: Build Android for Google Play
-        run: |
-          cd "Script Files"
-          flutter build appbundle --release
-
-      - name: Deploy to Google Play
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
-          packageName: com.skycap.colibri
-          releaseFiles: 'Script Files/build/app/outputs/bundle/release/app-release.aab'
-          track: internal
+        run: flutter build ios --release
+        working-directory: ./Script Files
