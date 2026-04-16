@@ -1,0 +1,58 @@
+name: Security & Code Quality Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: |
+          cd "Script Files"
+          flutter pub get
+
+      - name: Analyze code
+        run: |
+          cd "Script Files"
+          flutter analyze
+
+      - name: Check formatting
+        run: |
+          cd "Script Files"
+          dart format --set-exit-if-changed lib/
+
+      - name: Run linter
+        run: |
+          cd "Script Files"
+          flutter pub run custom_lint
+
+      - name: Check for hardcoded secrets
+        run: |
+          cd "Script Files"
+          if grep -r "api_key\|password\|token" lib/ --include="*.dart" | grep -v "// " | grep -v "const"; then
+            echo "⚠️ Found potential hardcoded secrets!"
+            exit 1
+          fi
+          echo "✅ No hardcoded secrets found"
+
+      - name: Check for print statements
+        run: |
+          cd "Script Files"
+          if grep -r "print(" lib/ --include="*.dart" | grep -v "// " | grep -v "AppLogger"; then
+            echo "⚠️ Found print() statements! Use AppLogger instead"
+            exit 1
+          fi
+          echo "✅ No print() statements found"

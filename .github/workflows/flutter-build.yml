@@ -1,0 +1,57 @@
+name: Flutter Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: |
+          cd "Script Files"
+          flutter pub get
+
+      - name: Generate code
+        run: |
+          cd "Script Files"
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Run tests
+        run: |
+          cd "Script Files"
+          flutter test
+
+      - name: Build APK (Android)
+        run: |
+          cd "Script Files"
+          flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: Script Files/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Build IPA (iOS)
+        run: |
+          cd "Script Files"
+          flutter build ios --release --no-codesign
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.ipa
+          path: Script Files/build/ios/iphoneos/Runner.app
