@@ -19,12 +19,12 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
-        working-directory: ./Script Files
+        working-directory: 'Script Files'
 
       - name: Generate code
         run: flutter pub run build_runner build --delete-conflicting-outputs
-        working-directory: ./Script Files
+        working-directory: 'Script Files'
 
       - name: Build iOS for TestFlight
         run: flutter build ios --release
-        working-directory: ./Script Files
+        working-directory: 'Script Files'

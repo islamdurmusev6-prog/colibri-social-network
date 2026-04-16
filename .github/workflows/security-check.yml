@@ -21,12 +21,12 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
-        working-directory: ./Script Files
+        working-directory: 'Script Files'
 
       - name: Analyze code
         run: flutter analyze
-        working-directory: ./Script Files
+        working-directory: 'Script Files'
 
       - name: Check formatting
         run: dart format --set-exit-if-changed lib/
-        working-directory: ./Script Files
+        working-directory: 'Script Files'
